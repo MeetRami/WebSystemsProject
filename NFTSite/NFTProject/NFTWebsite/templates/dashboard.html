@@ -1,0 +1,29 @@
+<!-- NFTWebsite/templates/NFTWebsite/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to Your Dashboard</h2>
+        <div class="nft-list">
+            <!-- Loop through user's NFTs and display them -->
+            <div class="nft-card">
+                <img src="{% static 'NFTWebsite/nft_image1.jpg' %}" alt="NFT Image">
+                <p>NFT Title</p>
+                <p>Description</p>
+            </div>
+            <div class="nft-card">
+                <img src="{% static 'NFTWebsite/nft_image2.jpg' %}" alt="NFT Image">
+                <p>NFT Title</p>
+                <p>Description</p>
+            </div>
+            <!-- Add more NFT cards as needed -->
+        </div>
+    </div>
+</body>
+</html>
