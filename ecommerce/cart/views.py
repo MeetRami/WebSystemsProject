@@ -3,6 +3,21 @@ from .models import Product, CartItem
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def product_list(request):
+    products = Product.objects.all()
+    cartItems = CartItem.objects.all()
+    totalItems = 0
+    totalItems += sum(item.quantity for item in cartItems)
+    
+    # Pass the username to the template
+    username = request.user.username
+    
+    return render(request, 'index.html', {'products': products, 'totalItems': totalItems, 'username': username})
+
 
 
 def add_to_cart(request, product_id):
@@ -22,12 +37,12 @@ def add_to_cart(request, product_id):
     # Return a JsonResponse indicating success
     return JsonResponse({'message': 'Item added to cart successfully'})
 
-def product_list(request):
-	products = Product.objects.all()
-	cartItems = CartItem.objects.all()
-	totalItems = 0
-	totalItems += sum(item.quantity for item in cartItems)
-	return render(request, 'index.html', {'products': products, 'totalItems':totalItems})
+# def product_list(request):
+# 	products = Product.objects.all()
+# 	cartItems = CartItem.objects.all()
+# 	totalItems = 0
+# 	totalItems += sum(item.quantity for item in cartItems)
+# 	return render(request, 'index.html', {'products': products, 'totalItems':totalItems})
 
 def view_cart(request):
 	cart_items = CartItem.objects.filter(user=request.user.id)
@@ -61,15 +76,6 @@ def checkout(request):
 	totalItems = 0
 	return render(request, 'checkout.html', {'cart_items': prev_cart_items, 'total_price': total_price, 'totalItems':totalItems})
 
-# def remove_one_from_cart(request, item_id):
-# 	cart_item = CartItem.objects.get(id=item_id)
-# 	if cart_item.quantity==1:
-# 		cart_item.delete()
-# 	else:
-# 		cart_item.quantity -= 1
-# 		cart_item.save()
-# 	return redirect('cart:view_cart')
-
 def home(request):
 	return HttpResponse('Hello, World!')
 
@@ -85,8 +91,8 @@ def login_view(request):
         # If user is authenticated, log them in and redirect to a protected page
         if user is not None:
             login(request, user)
-            # Redirect to a success page, or any other desired page
-            return redirect('home')  # Replace 'home' with the name of your homepage URL
+            # Redirect to the dashboard (index page) after login
+            return redirect('cart:product_list')  # Assuming 'product_list' is the name of your view function for the index page
         else:
             # If authentication fails, display an error message
             error_message = "Invalid username or password. Please try again."
@@ -94,3 +100,14 @@ def login_view(request):
     else:
         # If request method is GET, render the login page
         return render(request, 'login.html')
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Redirect to the dashboard (index page) after successful signup
+            return redirect('cart:product_list')  # Assuming 'product_list' is the name of your view function for the index page
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})

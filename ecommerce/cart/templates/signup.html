@@ -1,9 +1,11 @@
+<!-- signup.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Sign Up</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,7 +18,7 @@
             height: 100vh;
         }
         
-        .login-container {
+        .signup-container {
             width: 300px;
             padding: 20px;
             background-color: #ffffff;
@@ -24,7 +26,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
-        .login-container h2 {
+        .signup-container h2 {
             text-align: center;
             margin-bottom: 20px;
         }
@@ -61,23 +63,16 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form action="{% url 'cart:login_view' %}" method="post">
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form action="{% url 'cart:signup_view' %}" method="post">
             {% csrf_token %}
+            {{ form.as_p }}
             <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <button type="submit">Login</button>
+                <button type="submit">Sign Up</button>
             </div>
         </form>
-        <p>Don't have an account? <a href="{% url 'cart:signup_view' %}">Sign up here</a></p>
+        <p>Already have an account? <a href="{% url 'cart:login_view' %}">Login here</a></p>
     </div>
 </body>
 </html>
