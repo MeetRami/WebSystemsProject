@@ -12,6 +12,76 @@
         body{
             background-color:#1c1c1c;
         }
+        .wrap {
+            overflow: hidden;
+            margin: 30px;
+        }
+        
+        .carousel {
+            display: flex;
+            left: -100%;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            transform: translateX(100%);
+        }
+        @media (min-width: 30em) {
+            .carousel {
+            left: -33.33333%;
+            transform: translateX(33.33333%);
+            }
+        }
+        @media (min-width: 40em) {
+            .carousel {
+            left: -20%;
+            transform: translateX(20%);
+            }
+        }
+        
+        .carousel.is-reversing {
+            transform: translateX(-100%);
+        }
+        @media (min-width: 30em) {
+            .carousel.is-reversing {
+            transform: translateX(-33.33333%);
+            }
+        }
+        @media (min-width: 40em) {
+            .carousel.is-reversing {
+            transform: translateX(-20%);
+            }
+        }
+        
+        .carousel.is-set {
+            transform: none;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .carousel-seat {
+            background: #1c1c1c;
+            flex: 1 0 100%;
+            order: 2;
+        }
+        .carousel-seat:nth-child(even) {
+            background: #1c1c1c;
+;
+            ;
+        }
+        @media (min-width: 30em) {
+            .carousel-seat {
+            flex-basis: 33.33333%;
+            }
+        }
+        @media (min-width: 40em) {
+            .carousel-seat {
+            flex-basis: 20%;
+            }
+        }
+        
+        .carousel-seat.is-ref {
+            order: 1;
+        }
     </style>
 </head>
 <body>
@@ -49,7 +119,7 @@
     </nav>
     <br>
     <br>
-        <div class="container" style="margin-top: 20px; margin-bottom: 20px;"> 
+    <!-- <div class="container" style="margin-top: 20px; margin-bottom: 20px;"> 
         <div class="jumbotron">
             <div id="carousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
@@ -69,12 +139,52 @@
                 </a>
             </div>
         </div>
-    </div>
+    </div> -->
+    <div class='wrap'>
+        <ul class='carousel is-set'>
+          <li class='carousel-seat'>
+            <img class="navbar-brand" src="../../media/products/NFT-1.jpg" alt=".." width="100%" height="100%">
+          </li>
+          <li class='carousel-seat'>
+            <img class="navbar-brand" src="../../media/products/NFT-2.jpg" alt=".." width="100%" height="100%">
+          </li>
+          <li class='carousel-seat'>
+            <img class="navbar-brand" src="../../media/products/NFT-3.jpg" alt=".." width="100%" height="100%">
+          </li>
+          <li class='carousel-seat'>
+            <img class="navbar-brand" src="../../media/products/NFT-4.jpg" alt=".." width="100%" height="100%">
+          </li>
+          <li class='carousel-seat'>
+            <img class="navbar-brand" src="../../media/products/NFT-5.jpg" alt=".." width="100%" height="100%">
+          </li>
+          <li class='carousel-seat'>
+            <h2>6</h2>
+          </li>
+          <li class='carousel-seat'>
+            <h2>7</h2>
+          </li>
+          <li class='carousel-seat'>
+            <h2>8</h2>
+          </li>
+          <li class='carousel-seat'>
+            <h2>9</h2>
+          </li>
+          <li class='carousel-seat'>
+            <h2>10</h2>
+          </li>
+          <li class='carousel-seat'>
+            <h2>11</h2>
+          </li>
+          <li class='carousel-seat is-ref'>
+            <h2>12</h2>
+          </li>
+        </ul>
+      </div>
 
     <div class="card-columns px-2" style="margin: 20px;">
         {% for product in products %}
-        <div class="card" >
-            <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
+        <div class="card" style="width: 100%; height: 100%;">
+            <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" >
             <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
             <p class="card-text">{{ product.description }}</p>
