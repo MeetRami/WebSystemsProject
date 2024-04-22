@@ -8,14 +8,41 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required
-def product_list(request):
+def index(request):
     products = Product.objects.all()
     cart_items = CartItem.objects.filter(user=request.user)
-    cart_products = [item.product for item in cart_items]
-    for product in products:
-        product.InCart = product in cart_products
-    return render(request, 'index.html', {'products': products, 'username': request.user.username})
+    product_ids_in_cart = [item.product_id for item in cart_items]
 
+    for product in products:
+        if product.id in product_ids_in_cart:
+            product.in_cart = True
+        else:
+            product.in_cart = False
+
+    context = {
+        'products': products,
+        'username': request.user.username,
+        'totalItems': sum(item.quantity for item in cart_items),
+    }
+    return render(request, 'index.html', context)
+
+def product_list(request):
+    products = Product.objects.all()
+    if request.user.is_authenticated:
+        cart_items = CartItem.objects.filter(user=request.user)
+        cart_product_ids = [item.product.id for item in cart_items]
+        for product in products:
+            product.in_cart = product.id in cart_product_ids
+    else:
+        for product in products:
+            product.in_cart = False
+
+    context = {
+        'products': products,
+        'username': request.user.username if request.user.is_authenticated else None,
+        'totalItems': sum(item.quantity for item in cart_items) if request.user.is_authenticated else 0,
+    }
+    return render(request, 'index.html', context)
 
 def view_cart(request):
     cart_items = CartItem.objects.filter(user=request.user.id)
@@ -29,7 +56,7 @@ def add_to_cart(request, product_id):
 	cart_item, created = CartItem.objects.get_or_create(product=product, user=request.user)
 	cart_item.quantity = 1
 	cart_item.save()
-	return redirect('cart:view_cart')
+	return redirect('cart:product_list')
 
 def remove_from_cart(request, item_id):
 	cart_item = CartItem.objects.get(id=item_id)
@@ -73,10 +100,10 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('cart:product_list')
+            return render(request, 'login.html')
     else:
         form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
