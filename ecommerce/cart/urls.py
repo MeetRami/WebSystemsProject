@@ -13,4 +13,5 @@ urlpatterns = [
 	#path('remove_one/<int:item_id>/', views.remove_one_from_cart, name='remove_one_from_cart'),
 	path('login/', views.login_view, name='login_view'),
     path('signup/', views.signup_view, name='signup_view'),
+    path('logout/', views.logout_view, name='logout_view')
 ]

@@ -18,27 +18,31 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
 					<a class="btn btn-dark my-2 my-sm-0" href="#">Gallery <span class="sr-only">(current)</span></a>
 				</li>
 			</ul>
 			<ul class="navbar-nav">
-				<li class="nav-item">
-					<!-- Display "Login" or username based on authentication -->
-					{% if username %}
+				{% if username %}
+					<li class="nav-item">
 						<span class="navbar-text">{{ username }}</span>
-					{% else %}
+					</li>
+					<li class="nav-item">
+						<a class="btn btn-dark my-2 my-sm-0" href="{% url 'cart:logout_view' %}">Logout</a>
+					</li>
+				{% else %}
+					<li class="nav-item">
 						<a class="btn btn-dark my-2 my-sm-0" href="{% url 'cart:login_view' %}"><i class="fas fa-solid fa-user"></i><span>&nbsp; Login</span></a>
-					{% endif %}
-				</li>
+					</li>
+				{% endif %}
 				&nbsp;
 				<li class="nav-item">
 					<a class="btn btn-dark my-2 my-sm-0" href="{% url 'cart:view_cart' %}"><i class="fas fa-shopping-cart"></i><span>&nbsp;{{ totalItems }}</span></a>
 				</li>
 			</ul>
-		</div>
+		</div>		
 		
     </nav>
 	<br>

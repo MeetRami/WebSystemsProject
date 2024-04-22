@@ -2,54 +2,41 @@ from django.shortcuts import render, redirect
 from .models import Product, CartItem
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def product_list(request):
+    
     products = Product.objects.all()
     cartItems = CartItem.objects.all()
     totalItems = 0
     totalItems += sum(item.quantity for item in cartItems)
-    
-    # Pass the username to the template
     username = request.user.username
-    
     return render(request, 'index.html', {'products': products, 'totalItems': totalItems, 'username': username})
 
 
 
 def add_to_cart(request, product_id):
-    # Retrieve the product object
     product = get_object_or_404(Product, id=product_id)
     
-    # Check if the user is authenticated
     if isinstance(request.user, AnonymousUser):
-        # If the user is not authenticated, handle accordingly
         return JsonResponse({'message': 'Please log in to add items to your cart'}, status=401)
     
-    # If the user is authenticated, proceed with adding the item to the cart
     cart_item, created = CartItem.objects.get_or_create(product=product, user=request.user)
     cart_item.quantity = 1
     cart_item.save()
     
-    # Return a JsonResponse indicating success
     return JsonResponse({'message': 'Item added to cart successfully'})
 
-# def product_list(request):
-# 	products = Product.objects.all()
-# 	cartItems = CartItem.objects.all()
-# 	totalItems = 0
-# 	totalItems += sum(item.quantity for item in cartItems)
-# 	return render(request, 'index.html', {'products': products, 'totalItems':totalItems})
 
 def view_cart(request):
-	cart_items = CartItem.objects.filter(user=request.user.id)
-	total_price = sum(item.product.price * item.quantity for item in cart_items)
-	totalItems = 0
-	totalItems += sum(item.quantity for item in cart_items)
-	return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price, 'totalItems':totalItems})
+    cart_items = CartItem.objects.filter(user=request.user.id)
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    totalItems = sum(item.quantity for item in cart_items)
+    username = request.user.username if request.user.is_authenticated else None
+    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price, 'totalItems': totalItems, 'username': username})
 
 def add_to_cart(request, product_id):
 	product = Product.objects.get(id=product_id)
@@ -81,24 +68,18 @@ def home(request):
 
 def login_view(request):
     if request.method == 'POST':
-        # Extract username and password from the POST data
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Authenticate user
         user = authenticate(request, username=username, password=password)
 
-        # If user is authenticated, log them in and redirect to a protected page
         if user is not None:
             login(request, user)
-            # Redirect to the dashboard (index page) after login
-            return redirect('cart:product_list')  # Assuming 'product_list' is the name of your view function for the index page
+            return redirect('cart:product_list')
         else:
-            # If authentication fails, display an error message
             error_message = "Invalid username or password. Please try again."
             return render(request, 'login.html', {'error_message': error_message})
     else:
-        # If request method is GET, render the login page
         return render(request, 'login.html')
 
 def signup_view(request):
@@ -106,8 +87,11 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            # Redirect to the dashboard (index page) after successful signup
-            return redirect('cart:product_list')  # Assuming 'product_list' is the name of your view function for the index page
+            return redirect('cart:product_list')
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('cart:login_view')
