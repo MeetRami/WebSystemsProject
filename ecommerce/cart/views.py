@@ -103,7 +103,7 @@ def signup_view(request):
             return render(request, 'login.html')
     else:
         form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
