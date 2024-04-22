@@ -73,17 +73,19 @@
 
     <div class="card-columns px-2" style="margin: 20px;">
         {% for product in products %}
-        <div class="card" >
+        <div class="card">
             <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
             <div class="card-body">
-            <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text">{{ product.description }}</p>
-            <p class="card-text">Price: ${{ product.price }}</p>
-            {% if product.in_cart %}
-                <a href="#" class="btn btn-dark btn-block disabled">In Cart Already</a>
-            {% else %}
-                <a href="{% url 'cart:add_to_cart' product.id %}" class="btn btn-dark btn-block">Add to Cart</a>
-            {% endif %}
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
+                <p class="card-text">Price: ${{ product.price }}</p>
+                {% if product.isSold %}
+                    <span class="btn btn-dark btn-block disabled">Sold Out</span>
+                {% elif product.in_cart %}
+                    <a href="#" class="btn btn-dark btn-block disabled">In Cart Already</a>
+                {% else %}
+                    <a href="{% url 'cart:add_to_cart' product.id %}" class="btn btn-dark btn-block">Add to Cart</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
