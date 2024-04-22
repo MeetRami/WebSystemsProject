@@ -7,7 +7,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
 def product_list(request):
     products = Product.objects.all()
     cart_items = CartItem.objects.filter(user=request.user)
@@ -73,7 +72,7 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('cart:product_list')
+            return render(request, 'login.html')
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
