@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Product, CartItem
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
-from .models import Product, CartItem
+from django.contrib.auth import authenticate, login
+
 
 def add_to_cart(request, product_id):
     # Retrieve the product object
@@ -71,3 +72,25 @@ def checkout(request):
 
 def home(request):
 	return HttpResponse('Hello, World!')
+
+def login_view(request):
+    if request.method == 'POST':
+        # Extract username and password from the POST data
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # Authenticate user
+        user = authenticate(request, username=username, password=password)
+
+        # If user is authenticated, log them in and redirect to a protected page
+        if user is not None:
+            login(request, user)
+            # Redirect to a success page, or any other desired page
+            return redirect('home')  # Replace 'home' with the name of your homepage URL
+        else:
+            # If authentication fails, display an error message
+            error_message = "Invalid username or password. Please try again."
+            return render(request, 'login.html', {'error_message': error_message})
+    else:
+        # If request method is GET, render the login page
+        return render(request, 'login.html')
