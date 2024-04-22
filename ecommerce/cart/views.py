@@ -7,14 +7,42 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 
-def product_list(request):
+@login_required
+def index(request):
     products = Product.objects.all()
     cart_items = CartItem.objects.filter(user=request.user)
-    cart_products = [item.product for item in cart_items]
-    for product in products:
-        product.InCart = product in cart_products
-    return render(request, 'index.html', {'products': products, 'username': request.user.username})
+    product_ids_in_cart = [item.product_id for item in cart_items]
 
+    for product in products:
+        if product.id in product_ids_in_cart:
+            product.in_cart = True
+        else:
+            product.in_cart = False
+
+    context = {
+        'products': products,
+        'username': request.user.username,
+        'totalItems': sum(item.quantity for item in cart_items),
+    }
+    return render(request, 'index.html', context)
+
+def product_list(request):
+    products = Product.objects.all()
+    if request.user.is_authenticated:
+        cart_items = CartItem.objects.filter(user=request.user)
+        cart_product_ids = [item.product.id for item in cart_items]
+        for product in products:
+            product.in_cart = product.id in cart_product_ids
+    else:
+        for product in products:
+            product.in_cart = False
+
+    context = {
+        'products': products,
+        'username': request.user.username if request.user.is_authenticated else None,
+        'totalItems': sum(item.quantity for item in cart_items) if request.user.is_authenticated else 0,
+    }
+    return render(request, 'index.html', context)
 
 def view_cart(request):
     cart_items = CartItem.objects.filter(user=request.user.id)
